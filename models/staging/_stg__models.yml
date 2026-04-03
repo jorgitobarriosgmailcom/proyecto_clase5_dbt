@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_pokeapi__pokemon
+    description: "Datos de Pokemon limpiados y estandarizados desde la tabla cruda cargada por Airbyte."
+    columns:
+      - name: pokemon_id
+        description: "Identificador único del Pokemon."
+        tests:
+          - unique
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list: [INTEGER, BIGINT]
+
+      - name: pokemon_name
+        description: "Nombre del Pokemon."
+        tests:
+          - not_null
+
+      - name: height
+        description: "Altura del Pokemon."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 10000
+
+      - name: weight
+        description: "Peso del Pokemon."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 100000
+
+      - name: base_experience
+        description: "Experiencia base del Pokemon."
+        tests:
+          - not_null
+
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 1
+          max_value: 100000
+
+  - name: stg_github__issues
+    description: "Datos de GitHub Issues limpiados y renombrados desde la tabla cruda cargada por Airbyte."
+    columns:
+      - name: issue_id
+        description: "Identificador único del issue."
+        tests:
+          - unique
+          - not_null
+
+      - name: issue_number
+        description: "Número visible del issue dentro del repositorio."
+        tests:
+          - not_null
+
+      - name: title
+        description: "Título del issue."
+        tests:
+          - not_null
+
+      - name: state
+        description: "Estado del issue."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['open', 'closed']
+
+      - name: comments_count
+        description: "Cantidad de comentarios asociados al issue."
+        tests:
+          - not_null

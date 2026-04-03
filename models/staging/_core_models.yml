@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: int_pokemon_issue_summary
+    description: "Modelo intermedio que resume issues por estado y combina esa información con atributos analíticos de Pokemon."
+    columns:
+      - name: pokemon_id
+        description: "Identificador del Pokemon proveniente del staging."
+        tests:
+          - not_null
+
+      - name: pokemon_name
+        description: "Nombre del Pokemon."
+        tests:
+          - not_null
+
+      - name: power_tier
+        description: "Clasificación analítica del Pokemon según su experiencia base."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['high', 'normal']
+
+      - name: issue_state
+        description: "Estado agregado de los issues."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['open', 'closed']
+
+      - name: total_issues
+        description: "Cantidad total de issues por estado."
+        tests:
+          - not_null
+
+      - name: avg_comments
+        description: "Promedio de comentarios por estado."
+        tests:
+          - not_null
+
+  - name: obt_pokemon_issue_analysis
+    description: "Modelo final tipo OBT para análisis, combinando atributos de Pokemon con métricas agregadas de GitHub Issues."
+    columns:
+      - name: pokemon_id
+        description: "Identificador único del Pokemon."
+        tests:
+          - not_null
+
+      - name: pokemon_name
+        description: "Nombre del Pokemon."
+        tests:
+          - not_null
+
+      - name: power_tier
+        description: "Clasificación del Pokemon según experiencia base."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['high', 'normal']
+
+      - name: issue_state
+        description: "Estado agregado de los issues."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['open', 'closed']
+
+      - name: total_issues
+        description: "Cantidad de issues agregados."
+        tests:
+          - not_null
+
+      - name: avg_comments
+        description: "Promedio de comentarios."
+        tests:
+          - not_null
+
+      - name: issue_activity_level
+        description: "Clasificación de actividad de issues según volumen agregado."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['very_active', 'active', 'low_activity']
